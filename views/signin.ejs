@@ -1,0 +1,72 @@
+<html>
+
+<head>
+    <title>Shoes mall</title>
+    <%- include('_bootstrap.ejs')%>
+        <style>
+            .login {
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                padding: 10px;
+                box-shadow: 0px 0px 10px;
+            }
+
+            .heding {
+                font-family: sans-serif;
+                color: red !important;
+                text-transform: uppercase;
+                font-size: 3em;
+                letter-spacing: 12px;
+                overflow: hidden;
+                background: linear-gradient(90deg, #000, rgb(3, 32, 128), #000);
+                background-repeat: no-repeat;
+                background-size: 80%;
+                animation: animate 10s linear infinite;
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+            }
+
+            @keyframes animate {
+                0% {
+                    background-position: -500%;
+                }
+
+                100% {
+                    background-position: 500%;
+                }
+            }
+
+            .bg {
+                background: linear-gradient(grey, pink, lightblue);
+            }
+        </style>
+</head>
+
+<body class="bg">
+    <div class="container">
+        <div class="row">
+            <div class="login col-md-4 col-lg-4">
+
+                <form method="post" action="/signin">
+                    <div class="form-group">
+                        <label class="heding"> Welcome-User</label>
+                        <label>Email</label>
+                        <input type="email" name="email" class="form-control" />
+                    </div>
+                    <div class="form-group">
+                        <label>Password</label>
+                        <input type="password" name="password" class="form-control" />
+                    </div>
+                    <div class="form-group">
+                        <button type="submit" class="btn btn-primary">Sign In</button>
+                        <a href="/signup" style="float: right" class="text-primary">New user ?</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

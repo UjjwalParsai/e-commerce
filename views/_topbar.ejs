@@ -1,0 +1,161 @@
+<head>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"
+        integrity="sha384-IQsoLXl5PILFhosVNubq5LC7Qb9DXgDA9i+tQ8Zj3iwWAwPtgFTxbJ8NT4GN1R8p"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js"
+        integrity="sha384-cVKIPhGWiC2Al4u+LWgxfKTRIcfu0JTxR+EQDz/bgldoEyl4H0zUF0QKbrJ0EcQF"
+        crossorigin="anonymous"></script>
+    <style>
+        a {
+            color: #ffffff;
+            /* text-decoration: none; */
+            background-color: transparent;
+
+        }
+    </style>
+
+
+    <script src='https://kit.fontawesome.com/a076d05399.js' crossorigin='anonymous'></script>
+
+</head>
+<nav class=" navbar navbar-expand-lg navbar-dark bg-primary fixed-top">
+    <div class="container-fluid">
+        <a style="color:white;font-size: 25px; font-style: italic;" class="navbar-brand" href="#">Flipkart</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarsExample04">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item active">
+                    <a class="font-weight ml-2 p-2 mb-2" href="/" style="font-size: 20px;">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="font-weight ml-2 p-2 mb-2" href="/" style="font-size: 20px;">Products</a>
+                </li>
+                <%if(currentUser){%>
+                    <li class="nav-item">
+                        <a class="font-weight ml-2 p-2 mt-2" href="/signout" style="font-size: 20px;">Sign Out</a>
+                    </li>
+                    <%}else{%>
+                        <li class="nav-item">
+                            <a class="font-weight ml-2 p-2 mt-2" href="/signin" style="font-size: 20px;">Sign_In</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="font-weight ml-2 p-2 mt-2" href="/signup" style="font-size: 20px;">Sign_Up</a>
+                        </li>
+                        <%}%>
+            </ul>
+
+
+
+
+
+
+
+
+            <form class="d-flex p-2">
+                <input onkeyup="searchProduct(this.value,'<%=currentUser%>')" class="form-control me-2" type="search"
+                    placeholder="Enter yo ur query" aria-label="Search">&nbsp;
+                <button class="btn btn-primary" type="submit">Search</button>
+            </form>
+            <div class="cart">
+                <a class="title" style="color: white;" href="/order/order-history"> <i class="fa fa-history"
+                        style="font-size:32px"></i>
+
+                </a>
+                &nbsp;
+                &nbsp;
+                &nbsp;
+            </div>
+
+
+        </div>
+        <div class="  cart">
+            <a class="title" style="color: white;" href="/cart/view-cart"> <i class="fa fa-cart-plus"
+                    style="font-size:32px">Add-to-cart</i>
+            </a>
+            &nbsp;
+            &nbsp;
+            &nbsp;
+        </div>
+    </div>
+
+</nav>
+<div class="col-md-12 bg-primary">
+    <ul class="conta_icon d_none1">
+        <% let email=currentUser ? currentUser.email : "" ; %>
+            <li><a style="color: white;" href="#"><img src="/images/email.png" alt="#" style="padding-right: 20px;" />
+                Hello User :- <%=email%>
+                </a> </li>
+    </ul>
+</div>
+<script>
+    function searchProduct(keyword, currentUser) {
+        var xhttp = new XMLHttpRequest();
+        xhttp.open("GET", "/product/product-search/" + keyword, true);
+        xhttp.send();
+        xhttp.onreadystatechange = function () {
+            if (xhttp.readyState == 4) {
+                let data = xhttp.responseText;
+                data = JSON.parse(data);
+                let productView = "";
+                for (let product of data.productList) {
+                    let priceString = '';
+                    if (product.discountPercentage) {
+                        priceString = ' <del class="text-danger">' + product.price + '</del>' +
+                            '<span class="text-success">' + Math.round(product.price - ((product.price * product.discountPercentage) / 100)) + ' Rs.</span>';
+
+                    }
+                    else {
+                        priceString = '<span class="text-success">' + product.price + ' Rs.</span>'
+                    }
+                    let Cart = "";
+
+                    if (currentUser) {
+
+                        cart = ' <div class="m-3"> <a onclick="addInToCart(' + product.id + ')">' + '<button style="width:95%;" class="btn btn-success mb-4" style="margin-left: 10px;">Add Cart</button></a > </div > ';
+                    }
+                    else {
+                        cart = '</a> <a href="/signin"> <button style="width:95%;" <button style="width:95%;" class="btn btn-success mb-4" style="margin-left: 10px;">Add Cart</button> </a> </div>';
+                    }
+                    productView = productView + '<div style="height: 450px;" class="col-md-3 p-3">' +
+                        '<div style=" box-shadow: 0px 0px 10px;">' +
+                        '<img src="' + product.thumbnail + '" style="width:100%; height: 200px;" />' +
+                        '<h3 class="text-center mt-2">' + product.title.substring(0, 9) + '</h3>' +
+
+                        '<p class="text-center" style="font-size: 20px; background-color: rgb(251, 251, 163); ">' +
+                        'Price :' + priceString +
+                        '</p>' +
+
+                        ' <div class="m-3"> <a href="#"> <button style="width:95%;padding-left: 12px;" class="btn btn-outline-success mb-3">View More</button> </a> <a' + cart + '</a> </div>' +
+
+
+                        '</div>' +
+                        '</div>' +
+                        '</div>';
+                }
+                document.getElementById("product-display").innerHTML = productView;
+            }
+        }
+    }
+
+    function addInToCart(userId, productId) {
+        var xhttp = new XMLHttpRequest();
+        xhttp.open("GET", "/cart/add-to-cart/" + userId + "/" + productId, true);
+        xhttp.send();
+        xhttp.onreadystatechange = function () {
+            if (xhttp.readyState == 4) {
+                let data = JSON.parse(xhttp.responseText);
+                window.alert(data.message);
+            }
+        }
+    }
+    function hide(gotID) {
+        alert("function called");
+        gotID.remove();
+    }
+</script>

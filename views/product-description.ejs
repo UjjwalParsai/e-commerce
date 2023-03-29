@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Dashboard</title>
+    <%- include('__externallink.ejs')%>
+        <%- include('__externalscriptlink.ejs')%>
+            <%- include('_bootstrap.ejs')%>
+
+
+                <title>E-commerce</title>
+                <style>
+                    /* img:hover{
+
+            } */
+                </style>
+                <script>
+                    function changeImage(currentImageObject) {
+                        var mainImage = document.getElementById("mainImage");
+                        var temp = mainImage.src;
+                        mainImage.src = currentImageObject.src;
+                        currentImageObject.src = temp;
+                    }
+                </script>
+</head>
+<%- include('_topbar.ejs')%>
+    <section class="h-100 h-custom" style="background-color: #eee;">
+
+        <div class="container py-12 h-100">
+            <div class="row d-flex justify-content-center align-items-center h-100">
+                <div class="col-md-12">
+                    <div class="card">
+                        <div class="card-body p-4">
+
+                            <div class="row">
+
+                                <div class="col-lg-12">
+
+                                    <div class="p-4">
+                                        <h4 class="mb-3"><a href="#!" class="text-body"><i
+                                                    class="fas fa-long-arrow-alt-left me-2"></i>
+                                                Description</a></h4>
+                                        <hr class="my-4 btn-outline-success">
+                                    </div>
+                                    <div class="container">
+                                        <div class="row">
+                                            <div class="col-md-6 " style="width:40vw;float:left;margin-left: 7vh;">
+                                                <div style="overflow: hidden;" class="mb-4">
+                                                    <div id="lens"></div>
+                                                    <img id="mainImage" class="bigImage slideshow-items active"
+                                                        src="<%=product.thumbnail%>" style="border-radius: 20%;" />
+                                                    <div id="result"></div>
+                                                </div>
+                                                <% let allImages=product.imageArray.trim().split(" ");
+                                                              for(let image of allImages){%>
+                                                                <img onClick=" changeImage(this)" src="<%=image%>"
+                                                    width="70px" height="70px" class="ml-2 mb-2"
+                                                    style="box-shadow: 5px 5px 5px black;margin-left: 2vh;" />
+                                                <%} %>
+                                            </div>
+                                            <div class="col-md-4" style="width: 20vw;float: left; margin-left: 10vw;">
+                                                <h1
+                                                    style="color: green;font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;">
+                                                    <%=product.title%>
+                                                </h1>
+                                                <h4>Price : <%=product.price%> Rs.</h4>
+                                                <h4>Discount : <%=product.discountPercentage%> %</h4>
+                                                <h3>Brand : <%=product.brand%>
+                                                </h3>
+                                                <h3>Category: <%=product.category%>
+                                                </h3>
+                                                <h3>Rating : <%=product.rating%> / 5</h3>
+                                                <h5>
+                                                    <i class="fa fa-star" aria-hidden="true"
+                                                        style="color: goldenrod;"></i>
+                                                    <i class="fa fa-star" aria-hidden="true"
+                                                        style="color: goldenrod;"></i>
+                                                    <i class="fa fa-star" aria-hidden="true"
+                                                        style="color: goldenrod;"></i>
+                                                    <i class="fa fa-star" aria-hidden="true"
+                                                        style="color: goldenrod;"></i>
+                                                    <i class="fa fa-star" aria-hidden="true"></i>
+                                                </h5>
+                                                <p>
+                                                    <%=product.description%>
+                                                </p>
+
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                            </div>
+
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </section>
+
+</html>

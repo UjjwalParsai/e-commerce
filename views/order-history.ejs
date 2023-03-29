@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <%- include('__externallink.ejs')%>
+    <%- include('__externalscriptlink.ejs')%>
+       <!-- <%- include('_bootstrap.ejs')%> -->
+
+<style>
+   .top{
+
+      margin-top: 120px;
+   }
+</style>
+</head>
+<body>
+    <%-include('_topbar.ejs')%>
+    <div    >
+        <div class="container-fluid top">
+            <table class="table">
+              <thead class="bg-primary">
+                 <tr>
+                    <th>OrderId</th>
+                    <th>Date</th>
+                    <th>Amount</th>
+                    <th>Bill Amount</th>
+                    <th>Contact Person</th>
+                    <th>Address</th>
+                    <th>Status</th>
+                 </tr>
+              </thead>
+              <tbody>
+                 <%orderHistory.map((order, index)=>{%>
+                    <tr>
+                       <td><a href="/order/myorder/<%=order.id%>" style="color: blue;"><%=order.id%></a></td>
+                       <td><%=order.date%></td>
+                       <td><%=order.price%></td>
+                       <td><%=order.billamount%></td>
+                       <td><%=order.contactPerson%></td>
+                       <td><%=order.delieveryAddress%></td>
+                       <td><%=order.status%></td>
+                    </tr>
+                 <%})%>
+              </tbody>
+            </table>         
+        </div>
+     </div>
+
+     <script>
+      function addInToCart(userId, productId){
+        var xhttp = new XMLHttpRequest();
+        xhttp.open("GET","/order/"+userId+"/"+productId,true);
+        xhttp.send();
+        xhttp.onreadystatechange = function(){
+          if(xhttp.readyState == 4){
+            let data = JSON.parse(xhttp.responseText);
+            window.alert(data.message);
+          }
+        }
+      }
+   </script>
+</body>
+</html>

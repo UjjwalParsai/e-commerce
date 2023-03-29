@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <%- include('__externallink.ejs')%>
+        <%- include('__externalscriptlink.ejs')%>
+            <%- include('_bootstrap.ejs')%>
+                <style>
+                    .project {
+                        margin-top: 50px;
+                    }
+                </style>
+</head>
+
+
+<body class="main-layout">
+
+    <%-include('_topbar.ejs')%>
+        <div id="project" class="project">
+            <div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="titlepage te ">
+                            <h1>Your Order details</h1>
+                        </div>
+                        <div>
+
+                            <div class="col-md-12 col-lg-12 ">
+                                <div class="row font-weight-bold">
+                                    <div class="col-md-1">S.no</div>
+                                    <div class="col-md-2">Image</div>
+                                    <div class="col-md-3">Title</div>
+                                    <div class="col-md-2">Brand</div>
+                                    <div class="col-md-1">Qty.</div>
+                                    <div class="col-md-1">Price</div>
+                                    <div class="col-md-2">Remove</div>
+                                </div>
+                                <hr class=" 1px solid btn-outline-primary">
+                                <!-- <hr style="border: 1px solid #183661;" /> -->
+                                <%cartItems.map((cart,index)=>{%>
+                                    <div class="row  mb-2 p-1">
+                                        <div class="col-md-1">
+                                            <%=index*1+1%>
+                                        </div>
+                                        <div class="col-md-2"><img src="<%=cart.thumbnail%>"
+                                                style="width:120px; height: 80px;" /></div>
+                                        <div class="col-md-3">
+                                            <%=cart.title%>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <%=cart.brand.substring(0,10)%>
+                                        </div>
+                                        <div class="col-md-1">
+                                            <input onchange="changeQty('<%=index%>')" id="qty<%=index%>" type="number"
+                                                value="1" min="1" max="<%=cart.stock%>" style="width:35px;" />
+                                        </div>
+                                        <div class="col-md-1" id="price<%=index%>">
+                                            <%=cart.price%>
+                                        </div>
+                                        <div class="col-md-2 text-center">
+                                            <a href="/cart/delete/<%=cart.id%>" onclick="return confirm('Are you sure ?')"><i class="fa fa-trash-o text-danger" aria-hidden="true"></i></a>
+                                        </div>
+                                    </div>
+
+                                    <%})%>
+                            </div>
+                            <br>
+
+                            <div class="col-lg-6">
+                                <div class="bg-primary rounded-pill px-4 py-3 text-uppercase font-weight-bold">Order
+                                    summary </div>
+                                <div class="p-4">
+                                    <ul class="list-unstyled mb-4">
+                                        <h5>Total Item : <%=cartItems.length%>
+                                        </h5>
+                                        <h5>Bill Amount : <span id="totalBillAmount"></span>/Rs..</h5>
+                                        <button onclick="getDataFromStorage()" data-toggle="modal"
+                                            data-target="#myModal" class="btn btn-dark"
+                                            style=" margin-top: 15px;border-radius: 20px;">Checkout</button>
+                                </div>
+                                <div class="modal" id="myModal">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <form action="/order/save" method="post">
+                                                <!-- Modal Header -->
+                                                <input type="hidden" name="cartItems" id="cart" />
+                                                <div class="modal-header">
+                                                    <h4 class="modal-title">Enter delivery details</h4>
+                                                    <button type="button" class="close"
+                                                        data-dismiss="modal">&times;</button>
+                                                </div>
+
+                                                <!-- Modal body -->
+                                                <div class="modal-body">
+
+                                                    <div class="form-group">
+                                                        <label>Contact person name</label>
+                                                        <input type="text" name="contactPerson" class="form-control" />
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label>Contact number</label>
+                                                        <input type="text" name="contactNumber" class="form-control" />
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label>Delivery address</label>
+                                                        <textarea class="form-control"
+                                                            name="deliveryAddress"></textarea>
+                                                    </div>
+                                                </div>
+                                                <!-- Modal footer -->
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-danger"
+                                                        data-dismiss="modal">Close</button>
+                                                    <button type="submit" class="btn btn-success">Place order</button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <script>
+                                    function loadCartItems() {
+                                        var xhttp = new XMLHttpRequest();
+                                        xhttp.open("GET", "/cart/load-cart", true);
+                                        xhttp.send();
+                                        xhttp.onreadystatechange = function () {
+                                            if (xhttp.readyState == 4) {
+                                                let data = JSON.parse(xhttp.responseText);
+                                                let totalBillAmount = 0;
+                                                let totalBillDiscount = 0;
+
+                                                data = data.map((item, index) => {
+                                                    item.qty = 1;
+                                                    totalBillAmount += item.price
+                                                    totalBillDiscount += Math.trunc(item.price - ((item.price * item.discountPercentage) / 100))
+                                                    return item;
+                                                });
+                                                document.getElementById("totalBillAmount").innerHTML = "" + totalBillAmount;
+                                                document.getElementById("totalBillDiscount").innerHTML = "" + totalBillDiscount;
+                                                localStorage.setItem("cart-items", JSON.stringify(data));
+                                                console.log(data);
+                                            }
+                                        }
+                                    }
+                                    function changeQty(index) {
+                                        let updateQty = document.getElementById("qty" + index).value;
+                                        let priceObject = document.getElementById("price" + index);
+                                        let totalBillAmountObject = document.getElementById("totalBillAmount");
+                                        let totalBillDiscountObject = document.getElementById("totalBillDiscount");
+
+                                        let data = localStorage.getItem("cart-items");
+                                        data = JSON.parse(data);
+                                        data[index].qty = updateQty;
+                                        let updatedPrice = updateQty * data[index].price;
+                                        priceObject.innerHTML = "" + updatedPrice;
+                                        let amount = 0;
+                                        let Discount = 0;
+
+                                        data.map((item, index) => {
+                                            amount = amount + item.price * item.qty;
+                                            Discount += Math.trunc(item.price - ((item.price * item.discountPercentage) / 100)) * item.qty;
+                                        });
+                                        totalBillAmountObject.innerHTML = "" + amount;
+                                        totalBillDiscountObject.innerHTML = "" + Discount;
+                                        localStorage.setItem("cart-items", JSON.stringify(data));
+                                    }
+                                    function getDataFromStorage() {
+                                        let hiddenField = document.getElementById("cart");
+                                        hiddenField.value = localStorage.getItem("cart-items");
+                                    }
+                                    loadCartItems();
+                                </script>
+</body>
+
+</html>

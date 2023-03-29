@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <%- include('__externallink.ejs')%>
+        <%- include('__externalscriptlink.ejs')%>
+            <%- include('_bootstrap.ejs')%>
+
+                <style>
+                    img {
+                        margin-top: 10px;
+                        padding: 25px;
+                        /* height: 20vh; */
+                        /* width: 80%; */
+                        display: block;
+                        margin-left: auto;
+                        margin-right: auto;
+                        /* box-shadow: 0px 0px 4px blue; */
+                        border-radius: 10%;
+                    }
+
+                    .click {
+                        background-color: white;
+                        border: 1px solid black;
+                        border-radius: 50%;
+                        /* border: none; */
+                        margin-left: 230px;
+                        /* margin-bottom: 10px; */
+                        height: 8%;
+                        width: 12%;
+                        box-shadow: 0px 0px 5px black;
+
+                    }
+
+                    .image:hover {
+                        -webkit-transform: scaleX(-1);
+                        transform: scaleX(-1);
+                        transition: 2s;
+
+                    }
+
+                    .image {
+                        width: 70%;
+                        margin-left: auto;
+                        margin-right: auto;
+                        margin-bottom: 10px;
+
+
+
+
+                    }
+
+                    .innerdiv {
+                        border-top-left-radius: calc(0.25rem - 1px);
+                        border-top-right-radius: calc(0.25rem - 1px);
+                    }
+
+                    a {
+                        color: white;
+                    }
+
+                    .slider_section {
+                        min-height: 450px;
+                        /* background: #98bce0; */
+                        position: relative;
+                    }
+
+                    .checked {
+                        color: orange;
+                    }
+                </style>
+                <title>E-commerce</title>
+</head>
+
+<body>
+
+    <div>
+        <%- include('_topbar.ejs')%>
+    </div>
+
+    <div>
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="titlepage">
+                        <h2>Categories</h2>
+                        <hr style="border: 3px solid black" />
+                    </div>
+                </div>
+            </div>
+            <%categoryList.map((category,index)=>{%>
+                <a href="/product/<%=category.categoryName%>">
+                    <span class="font-weight-bold ml-1 p-1 bg-info">
+                        <%=category.categoryName.toUpperCase()%>
+                    </span>
+                </a>
+                <%})%>
+        </div>
+        <div id="project" class="project">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="titlepage">
+                            <h2>Featured Products</h2>
+                        </div>
+                    </div>
+                </div>
+                <div class="container">
+                    <div class="row mb-3" id="product-display">
+                        <%productList.map((product,index)=>{%>
+                            <div style="height: 450px;" class="col-md-3 p-3 mb-2">
+
+                                <div style="box-shadow: 0px 0px 10px black; ">
+                                    <!-- <div>
+                              <button class='click' onclick='hide("<%=(product.id)++%>")'>X</button>
+                           </div> -->
+                                    <div class="image p-1"><img src="<%=product.thumbnail%>"
+                                            style="width:100%;box-shadow: 0px 0px 4px black;
+                                 height: 160px; font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;" />
+                                        <!-- rgb(94, 86, 248) -->
+                                    </div>
+                                    <h4 class="text-center p-0">
+                                        <%=product.title.substring(0,9)%>
+
+                                    </h4>
+                                    <div class="p-2">
+                                        <% if (product.rating> 4.5) { %>
+                                            <div class="d-flex p-1 col-md-3">
+                                                <span class="fa fa-star checked"></span>
+                                                <span class="fa fa-star checked"></span>
+                                                <span class="fa fa-star checked"></span>
+                                                <span class="fa fa-star checked"></span>
+                                                <span class="fa fa-star"></span>
+
+
+                                            </div>
+                                            <% } else { %>
+                                                <div class="d-flex p-1 col-md-3">
+                                                    <span class="fa fa-star checked"></span>
+                                                    <span class="fa fa-star checked"></span>
+                                                    <span class="fa fa-star checked"></span>
+                                                    <span class="fa fa-star"></span>
+                                                    <span class="fa fa-star"></span>
+                                                </div>
+                                                <% } %>
+                                    </div>
+                                    <p class="text-center"
+                                        style="font-size: 20px; background-color: rgb(251, 251, 163);">
+                                        <!-- Price -->
+                                        <%if(product.discountPercentage){%>
+                                            <del class="text-danger">
+                                                <%=product.price%>
+                                            </del>
+                                            <span
+                                                class="text-primary"><%=Math.round(product.price-((product.price*product.discountPercentage)
+                                                    /100))%> ₹.</span>
+                                            <%}else{%>
+                                                <span class="text-primary">
+                                                    <%=product.price%> Rs.
+                                                </span>
+                                                <%}%>
+                                    </p>
+                                    <div class="m-3">
+                                        <%if(currentUser){%>
+
+                                            <a href="/product/view/<%=product.id%>">
+                                                <button style="width:95%;padding-left: 12px;"
+                                                    class="btn btn-outline-success mb-3">View
+                                                    More</button>
+                                            </a>
+                                            <a
+                                                onclick="addInToCart('<%=currentUser.id*1+1543%>','<%=product.id*1 + 2567%>')">
+                                                <button style="width:95%;" class="btn btn-success mb-3"
+                                                    style="margin-left: 10px;">Add
+                                                    Cart</button>
+                                            </a>
+                                            <%}else{%>
+                                                <!-- before login ye code chalega -->
+                                                <a href=" /product/view/<%=product.id%>">
+                                                    <button style="width:95%;padding-left: 12px;"
+                                                        class="btn btn-outline-success mb-3">View
+                                                        More</button>
+                                                </a>
+                                                <a href="/cart/add-to-cart/''/''">
+                                                    <button style="width:95%;" class="btn btn-success mb-4"
+                                                        style="margin-left: 10px;">Add Cart</button>
+                                                </a>
+                                                <%}%>
+                                    </div>
+
+                                </div>
+                            </div>
+                            <%})%>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <footer class="bg-dark text-center text-white">
+        <!-- Grid container -->
+        <div class="container p-4">
+            <!-- Section: Social media -->
+            <section class="mb-4">
+                <!-- Facebook -->
+                <a class="btn btn-outline-light btn-floating m-1" href="#!" role="button"><i
+                        class="fab fa-facebook-f"></i></a>
+
+                <!-- Twitter -->
+                <a class="btn btn-outline-light btn-floating m-1" href="#!" role="button"><i
+                        class="fab fa-twitter"></i></a>
+
+                <!-- Google -->
+                <a class="btn btn-outline-light btn-floating m-1" href="#!" role="button"><i
+                        class="fab fa-google"></i></a>
+
+                <!-- Instagram -->
+                <a class="btn btn-outline-light btn-floating m-1" href="#!" role="button"><i
+                        class="fab fa-instagram"></i></a>
+
+                <!-- Linkedin -->
+                <a class="btn btn-outline-light btn-floating m-1" href="#!" role="button"><i
+                        class="fab fa-linkedin-in"></i></a>
+
+                <!-- Github -->
+                <a class="btn btn-outline-light btn-floating m-1" href="#!" role="button"><i
+                        class="fab fa-github"></i></a>
+            </section>
+            <!-- Section: Social media -->
+
+            <!-- Section: Form -->
+            <section class="">
+                <form action="">
+                    <!--Grid row-->
+                    <div class="row d-flex justify-content-center">
+                        <!--Grid column-->
+                        <div class="col-auto">
+                            <p class="pt-2">
+                                <strong>Sign up for our better reach</strong>
+                            </p>
+                        </div>
+                        <!--Grid column-->
+
+                        <!--Grid column-->
+                        <div class="col-md-5 col-12">
+                            <!-- Email input -->
+                            <div class="form-outline form-white mb-4">
+                                <input type="email" id="form5Example21" class="form-control" />
+                                <label class="form-label" for="form5Example21">Email address</label>
+                            </div>
+                        </div>
+                        <!--Grid column-->
+
+                        <!--Grid column-->
+                        <div class="col-auto">
+                            <!-- Submit button -->
+                            <button type="submit" class="btn btn-outline-light mb-4">
+                                Subscribe
+                            </button>
+                        </div>
+                        <!--Grid column-->
+                    </div>
+                    <!--Grid row-->
+                </form>
+            </section>
+            <!-- Section: Form -->
+
+            <!-- Section: Text -->
+            <section class="mb-4">
+                <p>
+                    Lorem ipsum dolor sit amet consectetur adipisicing elit. Sunt distinctio earum
+                    repellat quaerat voluptatibus placeat nam, commodi optio pariatur est quia magnam
+                    eum harum corrupti dicta, aliquam sequi voluptate quas.
+                </p>
+            </section>
+            <!-- Section: Text -->
+
+            <!-- Section: Links -->
+            <section class="">
+                <!--Grid row-->
+                <div class="row">
+                    <!--Grid column-->
+                    <div class="col-lg-3 col-md-6 mb-4 mb-md-0">
+                        <h5 class="text-uppercase">Links</h5>
+
+                        <ul class="list-unstyled mb-0">
+                            <li>
+                                <a href="#!" class="text-white">Link 1</a>
+                            </li>
+                            <li>
+                                <a href="#!" class="text-white">Link 2</a>
+                            </li>
+                            <li>
+                                <a href="#!" class="text-white">Link 3</a>
+                            </li>
+                            <li>
+                                <a href="#!" class="text-white">Link 4</a>
+                            </li>
+                        </ul>
+                    </div>
+                    <!--Grid column-->
+
+                    <!--Grid column-->
+                    <div class="col-lg-3 col-md-6 mb-4 mb-md-0">
+                        <h5 class="text-uppercase">Links</h5>
+
+                        <ul class="list-unstyled mb-0">
+                            <li>
+                                <a href="#!" class="text-white">Link 1</a>
+                            </li>
+                            <li>
+                                <a href="#!" class="text-white">Link 2</a>
+                            </li>
+                            <li>
+                                <a href="#!" class="text-white">Link 3</a>
+                            </li>
+                            <li>
+                                <a href="#!" class="text-white">Link 4</a>
+                            </li>
+                        </ul>
+                    </div>
+                    <!--Grid column-->
+
+                    <!--Grid column-->
+                    <div class="col-lg-3 col-md-6 mb-4 mb-md-0">
+                        <h5 class="text-uppercase">Links</h5>
+
+                        <ul class="list-unstyled mb-0">
+                            <li>
+                                <a href="#!" class="text-white">Link 1</a>
+                            </li>
+                            <li>
+                                <a href="#!" class="text-white">Link 2</a>
+                            </li>
+                            <li>
+                                <a href="#!" class="text-white">Link 3</a>
+                            </li>
+                            <li>
+                                <a href="#!" class="text-white">Link 4</a>
+                            </li>
+                        </ul>
+                    </div>
+                    <!--Grid column-->
+
+                    <!--Grid column-->
+                    <div class="col-lg-3 col-md-6 mb-4 mb-md-0">
+                        <h5 class="text-uppercase">Links</h5>
+
+                        <ul class="list-unstyled mb-0">
+                            <li>
+                                <a href="#!" class="text-white">Link 1</a>
+                            </li>
+                            <li>
+                                <a href="#!" class="text-white">Link 2</a>
+                            </li>
+                            <li>
+                                <a href="#!" class="text-white">Link 3</a>
+                            </li>
+                            <li>
+                                <a href="#!" class="text-white">Link 4</a>
+                            </li>
+                        </ul>
+                    </div>
+                    <!--Grid column-->
+                </div>
+                <!--Grid row-->
+            </section>
+            <!-- Section: Links -->
+        </div>
+        <!-- Grid container -->
+
+        <!-- Copyright -->
+        <div class="text-center p-3" style="background-color: green">
+            © 2023 Copyright:
+            <a class="text-white" href="https://mdbootstrap.com/">DreamEpic@123.com</a>
+        </div>
+        <!-- Copyright -->
+    </footer>
+    <!-- Footer -->
+    <!-- Footer -->
+    <script>
+        function addInToCart(userId, productId) {
+            var xhttp = new XMLHttpRequest();
+            xhttp.open("GET", "/cart/add-to-cart/" + userId + "/" + productId, true);
+            xhttp.send();
+            xhttp.onreadystatechange = function () {
+                if (xhttp.readyState == 4) {
+                    let data = JSON.parse(xhttp.responseText);
+                    window.alert(data.message);
+                }
+            }
+        }
+        function hide(gotID) {
+            alert("function called");
+            gotID.remove();
+        }
+    </script>
+
+</body>
+
+</html>

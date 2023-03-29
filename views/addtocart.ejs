@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <%- include('__externallink.ejs')%>
+        <%- include('__externalscriptlink.ejs')%>
+            <%- include('_bootstrap.ejs')%>
+
+
+                <title>E-commerce</title>
+                <style>
+                    /* img:hover {
+                        -webkit-transform: scaleX(-1);
+                        transform: scaleX(-1);
+                        transition: 2s;
+                        box-shadow: 2px 2px 2px lightgreen;
+                    } */
+
+                    .checked {
+                        color: orange;
+                    }
+
+                    @media screen and (max-height: 450px) {
+                        .nav {
+                            padding-top: 15px;
+                        }
+
+                        .nav {
+                            font-size: 18px;
+                        }
+                    }
+                    /* .bill{
+                        float: right;
+                        width: 500px;
+                        margin-top: -670px;
+                        position: fixed;
+                        position: absolute; */
+
+
+                    /* } */
+                    .card-body{
+                        width: ;
+                    }
+                </style>
+
+</head>
+
+<body>
+    <script>
+        function loadCartItems() {
+            var xhttp = new XMLHttpRequest();
+            xhttp.open("GET", "/cart/load-cart", true);
+            xhttp.send();
+            xhttp.onreadystatechange = function () {
+                if (xhttp.readyState == 4) {
+                    let data = JSON.parse(xhttp.responseText);
+                    let totalBillAmount = 0;
+                    let totalBillDiscount = 0;
+
+                    data = data.map((item, index) => {
+                        item.qty = 1;
+                        totalBillAmount += item.price;
+                        totalBillDiscount += Math.trunc(item.price - ((item.price * item.discountPercentage) / 100));
+                        return item;
+                    });
+                    document.getElementById("totalBillAmount").innerHTML = "" + totalBillAmount;
+                    document.getElementById("totalBillDiscount").innerHTML = "" + totalBillDiscount;
+                    localStorage.setItem("cart-items", JSON.stringify(data));
+                }
+            }
+        }
+        function changeQty(index) {
+            let updateQty = document.getElementById("qty" + index).value;
+            let priceObject = document.getElementById("price" + index);
+            let totalBillAmountObject = document.getElementById("totalBillAmount");
+            let totalBillDiscountObject = document.getElementById("totalBillDiscount");
+
+            let data = localStorage.getItem("cart-items");
+            data = JSON.parse(data);
+            data[index].qty = updateQty;
+            let updatedPrice = updateQty * data[index].price;
+            priceObject.innerHTML = "" + updatedPrice;
+            let amount = 0;
+            let Discount = 0;
+
+            data.map((item, index) => {
+                amount = amount + item.price * item.qty;
+                Discount = Discount + Math.trunc(item.price - ((item.price * item.discountPercentage) / 100)) * item.qty;
+            });
+            totalBillAmountObject.innerHTML = "" + amount;
+            totalBillDiscountObject.innerHTML = "" + Discount;
+            localStorage.setItem("cart-items", JSON.stringify(data));
+        }
+        function getDataFromStorage() {
+            let hiddenField = document.getElementById("cart");
+            hiddenField.value = localStorage.getItem("cart-items");
+        }
+        loadCartItems();
+    </script>
+    <%- include('_topbar.ejs')%>
+
+
+        <section class="h-100 h-custom">
+
+            <div class="container py-6 h-100">
+
+                <div class="row d-flex justify-content-center align-items-center h-100"
+                    style="box-shadow: 0px 0px 10px black;">
+                    <div class="col">
+                        <div class="card">
+                            <div class="card-body p-4">
+
+                                <div class="row">
+
+                                    <div class="col-lg-7">
+
+                                        <div>
+                                            <h4 class="mb-3"><a href="/" class="text-body"><i
+                                                        class="fas fa-long-arrow-alt-left me-2"></i>
+                                                    Shopping Cart</a></h4>
+
+                                            <hr class="my-4 btn-outline-success">
+                                        </div>
+                                        <%cartItems.map((item,index)=>{%>
+
+
+                                            <% if (cartItems.length>0) {%>
+                                                <div class="card mb-3">
+
+                                                    <div class="ms-3">
+                                                        <h5>
+                                                            <%=index*1+1%>.
+
+                                                        </h5>
+
+
+                                                    </div>
+
+                                                    <div class="card-body">
+
+                                                        <!-- <div class="d-flex justify-content-between"> -->
+                                                            <div class="d-flex flex-row align-items-center">
+                                                                <div>
+                                                                    <img src="<%=item.thumbnail%>"
+                                                                        class=" img-fluid rounded-3" alt="Shopping item"
+                                                                        style="width: 70px;height: 70px;">
+                                                                </div>
+                                                                <div class="ms-3 p-5">
+                                                                    <h5>
+                                                                        <%=item.brand%>
+                                                                    </h5>
+
+                                                                    <p class="small mb-0">
+                                                                        <%=item.title%>
+                                                                    </p>
+
+                                                                </div>
+                                                            </div>
+                                                            <div
+                                                                class="col-md-7 d-flex flex-row align-items-center p-2">
+
+                                                                            <div class="d-flex p-6 col-md-2">
+                                                                                <input
+                                                                                    onchange="changeQty('<%=index%>')"
+                                                                                    id="qty<%=index%>" type="number"
+                                                                                    value="1" min="1"
+                                                                                    max="<%=item.stock%>"
+                                                                                    style="width:35px;" />
+                                                                            </div>
+
+                                                                            <div class="d-flex p-2 col-md-2"
+                                                                                id="price<%=index%>">
+
+                                                                                <del class="p-1 ms-3"
+                                                                                    id="price<%=index%>"
+                                                                                    style="color: rgb(139, 88, 88);">
+                                                                                    <%=item.price%>
+
+                                                                                </del>
+
+                                                                            </div>
+                                                                            <div class="d-flex p-4 col-md-4">
+                                                                                <h5>₹
+                                                                                    <%=Math.trunc(((item.discountPercentage*item.price)
+                                                                                        /100))%>
+
+                                                                                </h5>
+                                                                            </div>
+
+                                                                            <div class="d-flex p-1">
+                                                                                <a href="/cart/delete/<%=item.id%>"
+                                                                                    onclick="return confirm('Are you sure ?')"><i
+                                                                                        class="fa fa-trash-o text-danger"
+                                                                                        aria-hidden="true"></i></a>
+                                                                            </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <% } else { %>
+                                                    <h1>hello</h1>
+                                                    <% } %>
+                                                        <%})%>
+
+                                    </div>
+                                    <div>
+
+                                        <div class=" bill card bg-primary text-light rounded-3 ">
+                                            <div class="card-body">
+
+                                                <div class="d-flex justify-content-between align-items-center mb-1">
+                                                    <h3 class="mb-1">Card details</h3>
+
+                                                </div>
+
+                                                <div>
+                                                    <h4
+                                                        style="border: 1px dotted rgb(243, 226, 193) ; padding: 2px; width: 70%;">
+                                                        Total Item
+                                                        :
+                                                        <%=cartItems.length%>
+                                                    </h4>
+                                                </div>
+                                                <hr class="my-4 btn-outline-light">
+
+
+
+                                                <div class="d-flex justify-content-between">
+                                                    <p class="mb-2">Shipping Charge :</p>
+                                                    <h5 class="mb-2">
+                                                        ₹ <%=(cartItems.length)*10%>
+                                                    </h5>
+                                                </div>
+                                                <div class="d-flex justify-content-between">
+                                                    <p class="mb-2">Bill Amount :</p>
+                                                    <h5 class="mb-2">
+                                                        <span id="totalBillAmount" style="padding-left: 130px;"></span>
+                                                    </h5>
+                                                </div>
+                                                <div class="d-flex justify-content-between">
+                                                    <p class="mb-2">Discount Amount :</p>
+                                                    <h5 class="mb-2"><span id="totalBillDiscount"
+                                                            style="padding-left: 80px;"></span>
+                                                    </h5>
+                                                </div>
+                                                <button
+                                                    class="btn btn-outline-light btn-block btn-lg-d-flex justify-content-between"
+                                                    onclick="getDataFromStorage()" data-toggle="modal"
+                                                    data-target="#myModal" class="btn btn-success"
+                                                    style="width:100%;">Checkout</button>
+
+                                            </div>
+
+                                        </div>
+                                    </div>
+
+                                </div>
+
+
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+
+
+            </div>
+
+        </section>
+
+
+
+        <div class="modal" id="myModal">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <form action="/order/save" method="post">
+                        <!-- Modal Header -->
+                        <input type="hidden" name="cartItems" id="cart" />
+                        <div class="modal-header">
+                            <h4 class="modal-title">Enter delivery details</h4>
+                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        </div>
+
+                        <!-- Modal body -->
+                        <div class="modal-body">
+
+                            <div class="form-group">
+                                <label>Contact person name</label>
+                                <input type="text" name="contactPerson" class="form-control" />
+                            </div>
+                            <div class="form-group">
+                                <label>Contact number</label>
+                                <input type="text" name="contactNumber" class="form-control" />
+                            </div>
+                            <div class="form-group">
+                                <label>Delivery address</label>
+                                <textarea class="form-control" name="deliveryAddress"></textarea>
+                            </div>
+
+                        </div>
+
+                        <!-- Modal footer -->
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-success">Place order</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+</body>
+
+</html>
